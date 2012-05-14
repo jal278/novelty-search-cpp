@@ -1,0 +1,132 @@
+Novelty Search C++ v1.0
+By Joel Lehman
+Website: eplex.cs.ucf.edu/ns
+E-mail: jlehman@eecs.ucf.edu
+
+Documentation for this package is included in this README file.
+
+-------------
+1. LICENSE
+-------------
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2 as
+published by the Free Software Foundation (LGPL may be granted upon 
+request). This program is distributed in the hope that it will be useful, 
+but without any warranty; without even the implied warranty of 
+merchantability or fitness for a particular purpose. See the GNU General 
+Public License for more details.
+
+This distribution uses a modified version of the rtNEAT software
+package from http://nn.cs.ucf.edu/keyword?rtneat
+rtNEAT includes its own software license, which is included in this release.
+However, because Novelty Search C++ does not utilize the real-time component
+of rtNEAT, it or any extension of it is not covered under the rtNEAT license.  
+However, if you utilize the modified rtNEAT code to create a real-time 
+application, then the rtNEAT license would apply to your code.
+
+---------------------
+2. USAGE and SUPPORT
+---------------------
+
+We hope that this software will be a useful starting point for your
+own explorations with novelty search. The software is
+provided as is, however, we will do our best to maintain it and accommodate
+suggestions. If you want to be notified of future releases of the
+software or have questions, comments, bug reports or suggestions, send
+email to jlehman@eecs.ucf.edu
+
+Alternatively, you may post your questions on the NEAT Users Group at :
+http://tech.groups.yahoo.com/group/neat/.
+
+The following explains how to use Novelty Search C++. For information 
+on compiling Novelty Search C++, please see the section on compiling below.
+
+Intro
+------
+
+Novelty search is a new perspective on evolutionary computation
+and search; instead of following a gradient towards a predetermined
+objective, novelty search follows gradients towards *any* novel 
+behavior. It is motivated by the fact that objective functions may
+ sometimes hinder objectives from being reached. 
+
+A complete explanation of novelty search is available here:
+
+@InProceedings{jlehman:alife08,
+  author       = "Joel Lehman and Kenneth O. Stanley",
+  title        = "Exploiting Open-Endedness to Solve Problems 
+		Through the Search for Novelty",
+  booktitle    = "Proceedings of the Eleventh International 
+		Conference on Artificial Life (ALIFE XI)",
+  year         = 2008,
+  publisher    = "MIT Press",
+  address      = "Cambridge, MA",
+  site         = "http://eplex.cs.ucf.edu/publications.html#lehman.alife08",
+}
+
+The version of Novelty Search C++ distributed in this package executed
+the experiments in the above paper.
+
+For more information, please visit the EPlex website at:
+http://eplex.cs.ucf.edu/
+
+Usage Instructions
+---------------------------
+
+The only experiment packaged with this release is the maze navigation
+experiment from the above publication. To run an experiment,
+invoke the program as follows:
+
+./rtneat maze.ne medium_maze.txt
+
+Then select from either using fitness-based search or novelty-based search.
+The program will terminate when a solution is found, or 500,000 evaluations
+have elapsed. You can also substitute hard_maze.txt for medium_maze.txt to 
+test Novelty Search C++ on the hard maze (see the above paper for more 
+details).
+
+Collecting Results
+---------------------------
+
+If a run is successful, the program will write out which individual solved
+the maze and terminate. Regardless upon whether the run is successful or not,
+several files will be created when the run terminates:
+
+runresults.dat - Contains the value of the archive threshold and how many 
+individuals were added in each generation
+
+rtarchive.dat - Contains all the individuals in the archive
+
+rtgen_final - Contains all the individuals in the population at the time when
+the run ended.
+
+record.dat - Contains a record of each individual created. The first column
+contains the fitness of each individual, the second and third columns 
+indicate the x and y coordinates of each individual at the end of its 
+evaluation within the maze. 
+
+Creating your own Experiments
+-----------------------------
+
+Noveltyexp.cpp provides documented code that implements novelty search in the
+maze domain. It is a good starting point for your own experiments. The functions
+maze_novelty_realtime and maze_novelty_realtime_loop are good templates to
+copy and use for implementing another experiment. They are called from
+neatmain.cpp.
+
+Noveltyset.h and noveltyset.cpp provide the code responsible for the novelty
+archive and novelty score calculations.
+
+Maze.h is the implementation of the maze navigation domain used in the 
+experiments from the publication above.
+
+--------------
+3. COMPILING
+--------------
+
+The provided makefile should work under most linux/unix environments.
+There are no external dependencies. Simply type make in the Novelty
+Search C++ directory, and the rtneat executable will be created.
+
+(c) 2008 Evolutionary Complexity Research Group at University of Central Florida
