@@ -1,5 +1,6 @@
 #include "organism.h"
 #include "noveltyset.h"
+#include <cstring>
 
 using namespace NEAT;
 

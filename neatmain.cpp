@@ -1,7 +1,8 @@
 
 #include <iostream>
 #include <vector>
-#include <unistd.h>	
+#include <unistd.h>
+#include <cstring>
 #include "neat.h"
 #include "population.h"
 #include "experiments.h"
@@ -14,8 +15,6 @@ int main(int argc, char **argv) {
   char mazename[100]="hard_maze.txt";
   char filename[100]="./";
   char settingsname[100]="maze.ne";
-
-  int pause;
 
   NEAT::Population *p;
 
@@ -31,7 +30,7 @@ int main(int argc, char **argv) {
   NEAT::load_neat_params(settingsname,true);
 
   cout<<"loaded"<<endl;
-  
+
 
   int choice=(-1);
 	if(argc>4)
@@ -40,14 +39,14 @@ int main(int argc, char **argv) {
   int param=(-1);
 	if(argc>5)
 		param=atoi(argv[5]);
- 
+
   if (argc>3)
 	strcpy(mazename,argv[3]);
 
   if (argc>2)
 	strcpy(filename,argv[2]);
 
- 
+
   cout<<"Please choose an experiment: "<<endl;
   cout<<"1 - Maze Fitness Run" <<endl;
   cout<<"2 - Maze Novelty Run" <<endl;
@@ -70,5 +69,5 @@ if(choice==-1)
 
 
   return(0);
- 
+
 }
