@@ -3,6 +3,8 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <cstring>
+
 using namespace std;
 using namespace NEAT;
 
@@ -22,9 +24,9 @@ Population::Population(Genome *g,int size, float power) {
 	clone(g, size, power);
 }
 
-//Population::Population(int size,int i,int o, int nmax, bool r, double linkprob) {    
+//Population::Population(int size,int i,int o, int nmax, bool r, double linkprob) {
 //int count;
-//Genome *new_genome; 
+//Genome *new_genome;
 
 //cout<<"Making a random pop"<<endl;
 
@@ -41,7 +43,7 @@ Population::Population(Genome *g,int size, float power) {
 //cur_innov_num=(i+o+nmax)*(i+o+nmax)+1;
 
 //cout<<"Calling speciate"<<endl;
-//speciate(); 
+//speciate();
 
 //}
 
@@ -50,11 +52,11 @@ Population::Population(Genome *g,int size, float power) {
 //Added the ability for a population to be spawned
 //off of a vector of Genomes.  Useful when converging.
 Population::Population(std::vector<Genome*> genomeList, float power) {
-	
+
 	winnergen=0;
 	highest_fitness=0.0;
 	highest_last_changed=0;
-		
+
 	int count;
 	Genome *new_genome;
 	Organism *new_organism;
@@ -64,7 +66,7 @@ Population::Population(std::vector<Genome*> genomeList, float power) {
 	for (std::vector<Genome*>::iterator iter = genomeList.begin(); iter != genomeList.end(); ++iter)
 	{
 
-		new_genome=(*iter); 
+		new_genome=(*iter);
 		if(power>0)
 			new_genome->mutate_link_weights(power,1.0,GAUSSIAN);
 		//new_genome->mutate_link_weights(1.0,1.0,COLDGAUSSIAN);
@@ -109,7 +111,7 @@ Population::Population(const char *filename) {
 		bool md = false;
 		char metadata[4024];
 		//Loop until file is finished, parsing each line
-		while (!iFile.eof()) 
+		while (!iFile.eof())
 		{
 			iFile.getline(curline, sizeof(curline));
             std::stringstream ss(curline);
@@ -119,7 +121,7 @@ Population::Population(const char *filename) {
             //std::cout << curline << std::endl;
 
 			//Check for next
-			if (strcmp(curword,"genomestart")==0) 
+			if (strcmp(curword,"genomestart")==0)
 			{
 				//strcpy(curword, NEAT::getUnit(curline, 1, delimiters));
 				//int idcheck = atoi(curword);
@@ -140,9 +142,9 @@ Population::Population(const char *filename) {
 				if (cur_innov_num<(new_genome->get_last_gene_innovnum()))
 					cur_innov_num=new_genome->get_last_gene_innovnum();
 			}
-			else if (strcmp(curword,"/*")==0) 
+			else if (strcmp(curword,"/*")==0)
 			{
-				
+
 				// New metadata possibly, so clear out the metadata
 				strcpy(metadata, "");
 				curwordnum=1;
@@ -221,25 +223,25 @@ bool Population::verify() {
 	}
 
 	return verification;
-} 
+}
 
 bool Population::clone(Genome *g,int size, float power) {
 	int count;
 	Genome *new_genome;
 	Organism *new_organism;
 
-	new_genome = g->duplicate(1); 
+	new_genome = g->duplicate(1);
 	new_organism = new Organism(0.0,new_genome,1);
 	organisms.push_back(new_organism);
-	
+
 	//Create size copies of the Genome
 	//Start with perturbed linkweights
 	for(count=2;count<=size;count++) {
 		//cout<<"CREATING ORGANISM "<<count<<endl;
-		new_genome=g->duplicate(count); 
+		new_genome=g->duplicate(count);
 		if(power>0)
 			new_genome->mutate_link_weights(power,1.0,GAUSSIAN);
-		
+
 		new_genome->randomize_traits();
 		new_organism=new Organism(0.0,new_genome,1);
 		organisms.push_back(new_organism);
@@ -265,7 +267,7 @@ bool Population::spawn(Genome *g,int size) {
 	for(count=1;count<=size;count++) {
 		//cout<<"CREATING ORGANISM "<<count<<endl;
 
-		new_genome=g->duplicate(count); 		
+		new_genome=g->duplicate(count);
 		//new_genome->mutate_link_weights(1.0,1.0,GAUSSIAN);
 		new_genome->mutate_link_weights(1.0,1.0,COLDGAUSSIAN);
 		new_genome->randomize_traits();
@@ -286,7 +288,7 @@ bool Population::spawn(Genome *g,int size) {
 bool Population::speciate() {
 	std::vector<Organism*>::iterator curorg;  //For stepping through Population
 	std::vector<Species*>::iterator curspecies; //Steps through species
-	Organism *comporg=0;  //Organism for comparison 
+	Organism *comporg=0;  //Organism for comparison
 	Species *newspecies; //For adding a new species
 
 	int counter=0; //Species counter
@@ -302,7 +304,7 @@ bool Population::speciate() {
 			species.push_back(newspecies);
 			newspecies->add_Organism(*curorg);  //Add the current organism
 			(*curorg)->species=newspecies;  //Point organism to its species
-		} 
+		}
 		else {
 			comporg=(*curspecies)->first();
 			while((comporg!=0)&&
@@ -319,7 +321,7 @@ bool Population::speciate() {
 
 						//Keep searching for a matching species
 						++curspecies;
-						if (curspecies!=species.end()) 
+						if (curspecies!=species.end())
 							comporg=(*curspecies)->first();
 					}
 				}
@@ -332,7 +334,7 @@ bool Population::speciate() {
 					(*curorg)->species=newspecies;  //Point organism to its species
 				}
 
-		} //end else 
+		} //end else
 
 	} //end for
 
@@ -398,7 +400,7 @@ bool Population::epoch(int generation) {
 	std::vector<Organism*>::iterator curorg;
 	std::vector<Organism*>::iterator deadorg;
 
-	std::vector<Innovation*>::iterator curinnov;  
+	std::vector<Innovation*>::iterator curinnov;
 	std::vector<Innovation*>::iterator deadinnov;  //For removing old Innovs
 
 	double total=0.0; //Used to compute average fitness over all Organisms
@@ -409,10 +411,10 @@ bool Population::epoch(int generation) {
 
 	static double max_fit=0.0;
 	double high_fit=0.0;
-	//The fractional parts of expected offspring that can be 
+	//The fractional parts of expected offspring that can be
 	//Used only when they accumulate above 1 for the purposes of counting
 	//Offspring
-	double skim; 
+	double skim;
 	int total_expected;  //precision checking
 	int total_organisms=organisms.size();
 	int max_expected;
@@ -443,11 +445,11 @@ bool Population::epoch(int generation) {
 
 
 	//Keeping species diverse
-	//This commented out code forces the system to aim for 
+	//This commented out code forces the system to aim for
 	// num_species species at all times, enforcing diversity
 	//This tinkers with the compatibility threshold, which
 	// normally would be held constant
-	
+
 	if (generation>1) {
 		if (num_species<num_species_target)
 			NEAT::compat_threshold-=compat_mod;
@@ -457,7 +459,7 @@ bool Population::epoch(int generation) {
 		if (NEAT::compat_threshold<0.3) NEAT::compat_threshold=0.3;
 
 	}
-	
+
 
 
 	//Stick the Species pointers into a new Species list for sorting
@@ -470,7 +472,7 @@ bool Population::epoch(int generation) {
 	//sorted_species.qsort(order_species);
     std::sort(sorted_species.begin(), sorted_species.end(), order_species);
 
-	//Flag the lowest performing species over age 20 every 30 generations 
+	//Flag the lowest performing species over age 20 every 30 generations
 	//NOTE: THIS IS FOR COMPETITIVE COEVOLUTION STAGNATION DETECTION
 
 	/*
@@ -492,7 +494,7 @@ bool Population::epoch(int generation) {
 	//Also penalize stagnant species
 	//Then adjust the fitness using the species size to "share" fitness
 	//within a species.
-	//Then, within each Species, mark for death 
+	//Then, within each Species, mark for death
 	//those below survival_thresh*average
 	for(curspecies=species.begin();curspecies!=species.end();++curspecies) {
 		(*curspecies)->adjust_fitness();
@@ -518,7 +520,7 @@ bool Population::epoch(int generation) {
 	for(curspecies=species.begin();curspecies!=species.end();++curspecies) {
 		skim=(*curspecies)->count_offspring(skim);
 		total_expected+=(*curspecies)->expected_offspring;
-	}    
+	}
 
 	//Need to make up for lost foating point precision in offspring assignment
 	//If we lost precision, give an extra baby to the best Species
@@ -541,7 +543,7 @@ bool Population::epoch(int generation) {
 		//Note that this can happen if a stagnant Species
 		//dominates the population and then gets killed off by its age
 		//Then the whole population plummets in fitness
-		//If the average fitness is allowed to hit 0, then we no longer have 
+		//If the average fitness is allowed to hit 0, then we no longer have
 		//an average we can use to assign offspring.
 		if (final_expected<total_organisms) {
 			//      cout<<"Population died!"<<endl;
@@ -562,7 +564,7 @@ bool Population::epoch(int generation) {
 
 	for(curspecies=sorted_species.begin();curspecies!=sorted_species.end();++curspecies) {
 
-		//Print out for Debugging/viewing what's going on 
+		//Print out for Debugging/viewing what's going on
 		std::cout<<"orig fitness of Species"<<(*curspecies)->id<<"(Size "<<(*curspecies)->organisms.size()<<"): "<<(*((*curspecies)->organisms).begin())->orig_fitness<<" last improved "<<((*curspecies)->age-(*curspecies)->age_of_last_improvement)<<std::endl;
 	}
 
@@ -687,7 +689,7 @@ bool Population::epoch(int generation) {
 				//      cout<<"The best superchamp is "<<(*(((*curspecies)->organisms).begin()))->gnome->genome_id<<endl;
 
 				//Print this champ to file "champ" for observation if desired
-				//IMPORTANT:  This causes generational file output 
+				//IMPORTANT:  This causes generational file output
 				//print_Genome_tofile((*(((*curspecies)->organisms).begin()))->gnome,"champ");
 
 				curspecies++;
@@ -787,7 +789,7 @@ bool Population::epoch(int generation) {
 			deadorg=curorg;
 			++curorg;
 
-			//iter2 =  v.erase(iter); 
+			//iter2 =  v.erase(iter);
 
 			//Remove the organism from the master list
 			curorg=organisms.erase(deadorg);
@@ -805,7 +807,7 @@ bool Population::epoch(int generation) {
 	//basis.  (So this could be paralellized potentially.)
 	//	for(curspecies=species.begin();curspecies!=species.end();++curspecies) {
 
-	//KENHACK                                                                      
+	//KENHACK
 	//		for(std::vector<Species*>::iterator curspecies2=species.begin();curspecies2!=species.end();++curspecies2) {
 	//		  std::cout<<"PRE in repro specloop SPEC EXISTING number "<<(*curspecies2)->id<<std::endl;
 	//	}
@@ -813,7 +815,7 @@ bool Population::epoch(int generation) {
 	//	(*curspecies)->reproduce(generation,this,sorted_species);
 
 
-	//}    
+	//}
 
 
 	curspecies=species.begin();
@@ -832,7 +834,7 @@ bool Population::epoch(int generation) {
 
 	  //Move to the next on the list
 	  curspecies++;
-	  
+
 	  //Record where we are
 	  if (curspecies!=species.end())
 	    last_id=(*curspecies)->id;
@@ -842,7 +844,7 @@ bool Population::epoch(int generation) {
 	//cout<<"Reproduction Complete"<<endl;
 
 
-	//Destroy and remove the old generation from the organisms and species  
+	//Destroy and remove the old generation from the organisms and species
 	curorg=organisms.begin();
 	while(curorg!=organisms.end()) {
 
@@ -853,11 +855,11 @@ bool Population::epoch(int generation) {
 
 	  //Delete the organism from memory
 	  delete (*curorg);
-	  
+
 	  //Remember where we are
 	  deadorg=curorg;
 	  ++curorg;
-	  
+
 	  //std::cout<<"next org #  "<<(*curorg)->gnome->genome_id<<std::endl;
 
 	  //Remove the organism from the master list
@@ -880,7 +882,7 @@ bool Population::epoch(int generation) {
 
 			curspecies=species.erase(deadspecies);
 		}
-		//Age surviving Species and 
+		//Age surviving Species and
 		//Rebuild master Organism list: NUMBER THEM as they are added to the list
 		else {
 			//Age any Species that is not newly created in this generation
@@ -889,7 +891,7 @@ bool Population::epoch(int generation) {
 			}
 			else ++((*curspecies)->age);
 
-			//Go through the organisms of the curspecies and add them to 
+			//Go through the organisms of the curspecies and add them to
 			//the master list
 			for(curorg=((*curspecies)->organisms).begin();curorg!=((*curspecies)->organisms).end();++curorg) {
 				((*curorg)->gnome)->genome_id=orgcount++;
@@ -898,7 +900,7 @@ bool Population::epoch(int generation) {
 			++curspecies;
 
 		}
-	}      
+	}
 
 	//Remove the innovations of the current generation
 	curinnov=innovations.begin();
@@ -936,7 +938,7 @@ bool Population::epoch(int generation) {
 
 	//cout<<"babies_stolen at end: "<<babies_stolen<<endl;
 
-	//cout<<"Epoch complete"<<endl; 
+	//cout<<"Epoch complete"<<endl;
 
 	return true;
 
@@ -962,10 +964,10 @@ void Population::estimate_all_averages() {
 
 }
 
-Species *Population::choose_parent_species() {  
+Species *Population::choose_parent_species() {
 
 	double total_fitness=0;
-	std::vector<Species*>::iterator curspecies;  
+	std::vector<Species*>::iterator curspecies;
 	double marble; //The roulette marble
 	double spin; //Spins until the marble reaches its chosen point
 
@@ -976,7 +978,7 @@ Species *Population::choose_parent_species() {
 
 
 	//Keeping species diverse
-	//This commented out code forces the system to aim for 
+	//This commented out code forces the system to aim for
 	// num_species species at all times, enforcing diversity
 	//This tinkers with the compatibility threshold, which
 	// normally would be held constant
@@ -989,7 +991,7 @@ Species *Population::choose_parent_species() {
 	//if (NEAT::compat_threshold<0.3) NEAT::compat_threshold=0.3;
 
 
-	//Use the roulette method to choose the species 
+	//Use the roulette method to choose the species
 
 	//Sum all the average fitness estimates of the different species
 	//for the purposes of the roulette
@@ -1063,7 +1065,7 @@ Organism* Population::remove_worst() {
 
 		//Remove the organism from its species and the population
 		orgs_species->remove_org(org_to_kill);  //Remove from species
-		delete org_to_kill;  //Delete the organism itself 
+		delete org_to_kill;  //Delete the organism itself
 		organisms.erase(deadorg); //Remove from population list
 
 		//Did the species become empty?
@@ -1079,7 +1081,7 @@ Organism* Population::remove_worst() {
 	}
 
 	return org_to_kill;
-} 
+}
 
 //Warning: rtNEAT does not behave like regular NEAT if you remove the worst probabilistically
 //You really should just use "remove_worst," which removes the org with worst adjusted fitness.
@@ -1097,7 +1099,7 @@ Organism* Population::remove_worst_probabilistic() {
 	std::vector<Organism*> sorted_adjusted_orgs;
 
 	for(curorg = organisms.begin(); curorg != organisms.end(); ++curorg) {
-		if ((*curorg)->time_alive >= NEAT::time_alive_minimum) 
+		if ((*curorg)->time_alive >= NEAT::time_alive_minimum)
 			sorted_adjusted_orgs.push_back(*curorg);
 	}
 
@@ -1139,7 +1141,7 @@ Organism* Population::remove_worst_probabilistic() {
 	if (org_to_kill) {
 		//Remove the organism from its species and the population
 		orgs_species->remove_org(org_to_kill);  //Remove from species
-		delete org_to_kill;  //Delete the organism itself 
+		delete org_to_kill;  //Delete the organism itself
 		organisms.erase(deadorg); //Remove from population list
 
 		//Did the species become empty?
@@ -1155,7 +1157,7 @@ Organism* Population::remove_worst_probabilistic() {
 	}
 
 	return org_to_kill;
-} 
+}
 
 Organism* Population::reproduce_champ(int generation) {
 	std::vector<Organism*>::iterator curorg;
@@ -1170,8 +1172,8 @@ Organism* Population::reproduce_champ(int generation) {
 
 	//The weight mutation power is species specific depending on its age
 	double mut_power=NEAT::weight_mut_power;
-	
-		
+
+
 
 
 	champ=*(organisms.begin()); //Make sure at least something is chosen
@@ -1184,11 +1186,11 @@ Organism* Population::reproduce_champ(int generation) {
 		}
 	}
 
-	//Now reproduce the pop champ as a new org	
+	//Now reproduce the pop champ as a new org
 	new_genome=(champ->gnome)->duplicate(generation);
-	
+
 	//Maybe mutate its link weights
-	if (randfloat()<NEAT::mutate_link_weights_prob) {  
+	if (randfloat()<NEAT::mutate_link_weights_prob) {
 	//if (randfloat()<0.5) {
 			//cout<<"mutate_link_weights"<<endl;
 			new_genome->mutate_link_weights(mut_power,1.0,GAUSSIAN);
@@ -1203,7 +1205,7 @@ Organism* Population::reproduce_champ(int generation) {
 		(species).push_back(newspecies);
 		newspecies->add_Organism(baby);  //Add the baby
 		baby->species=newspecies;  //Point the baby to its species
-	} 
+	}
 	else {
 		comporg=(*curspecies)->first();
 		found=false;
@@ -1214,8 +1216,8 @@ Organism* Population::reproduce_champ(int generation) {
 		//baby->species = (*curspecies);
 
 
-		while((curspecies!=(species).end()) && (!found)) 
-		{	
+		while((curspecies!=(species).end()) && (!found))
+		{
 			if (comporg==0) {
 				//Keep searching for a matching species
 				++curspecies;
@@ -1231,7 +1233,7 @@ Organism* Population::reproduce_champ(int generation) {
 			else {
 				//Keep searching for a matching species
 				++curspecies;
-				if (curspecies!=(species).end()) 
+				if (curspecies!=(species).end())
 					comporg=(*curspecies)->first();
 			}
 		}
@@ -1244,7 +1246,7 @@ Organism* Population::reproduce_champ(int generation) {
 			baby->species=newspecies;  //Point baby to its species
 		}
 
-	} //end else     
+	} //end else
 
 	//Put the baby also in the master organism list
 	(organisms).push_back(baby);
@@ -1263,7 +1265,7 @@ Organism* Population::reproduce_champ(int generation) {
 //It is meant to be used so that we can reasses where Organisms should belong
 //as the speciation threshold changes.
 void Population::reassign_species(Organism *org) {
-	
+
 		Organism *comporg;
 		bool found=false;  //Note we don't really need this flag but it
 		                    //might be useful if we change how this function works
@@ -1274,8 +1276,8 @@ void Population::reassign_species(Organism *org) {
 		curspecies=(species).begin();
 
 		comporg=(*curspecies)->first();
-		while((curspecies!=(species).end()) && (!found)) 
-		{	
+		while((curspecies!=(species).end()) && (!found))
+		{
 			if (comporg==0) {
 				//Keep searching for a matching species
 				++curspecies;
@@ -1285,7 +1287,7 @@ void Population::reassign_species(Organism *org) {
 			else if (((org->gnome)->compatibility(comporg->gnome))<NEAT::compat_threshold) {
 				//If we found the same species it's already in, return 0
 				if ((*curspecies)==org->species) {
-					found=true;				
+					found=true;
 					break;
 				}
 				//Found compatible species
@@ -1297,20 +1299,20 @@ void Population::reassign_species(Organism *org) {
 			else {
 				//Keep searching for a matching species
 				++curspecies;
-				if (curspecies!=(species).end()) 
+				if (curspecies!=(species).end())
 					comporg=(*curspecies)->first();
 			}
 		}
 
 		//If we didn't find a match, create a new species, move the org to
-		// that species, check if the old species is empty, 
+		// that species, check if the old species is empty,
 		//re-estimate averages, and return 0
 		if (found==false) {
 
 			//Create a new species for the org
 			newspecies=new Species(++(last_species),true);
 			(species).push_back(newspecies);
-		
+
 			switch_species(org,org->species,newspecies);
 		}
 
@@ -1381,7 +1383,7 @@ void Population::switch_species(Organism *org, Species *orig_species, Species *n
 //
 //	//Find how many organisms in this species are below minimum age
 //	for(curorg=(*curspecies)->organisms.begin();curorg!=(*curspecies)->organisms.end();++curorg) {
-//		if ((*curorg)->time_alive < NEAT::time_alive_minimum) 
+//		if ((*curorg)->time_alive < NEAT::time_alive_minimum)
 //			num_below_min++;
 //	}
 //	if (num_below_min == (*curspecies)->organisms.size())
@@ -1395,7 +1397,7 @@ void Population::switch_species(Organism *org, Species *orig_species, Species *n
 //	(*curspecies)->organisms.qsort(order_orgs);
 //	int size_bottom_10_percent = mCeil((float)speciessize * 0.10);
 //	int randorgnum = NEAT::randint(speciessize - size_bottom_10_percent - 1, speciessize - 1);
-//	
+//
 //	curorg = (*curspecies)->organisms.begin();
 //	while (randorgnum > 0) {
 //		if ((*curorg)->time_alive >= NEAT::time_alive_minimum)
@@ -1404,7 +1406,7 @@ void Population::switch_species(Organism *org, Species *orig_species, Species *n
 //	}
 //	org_to_kill = *curorg;
 //	orgs_species=(org_to_kill)->species;
-//		
+//
 //		//if ((adjusted_fitness < min_fitness)&&
 //		//	(((*curorg)->time_alive) >= NEAT::time_alive_minimum))
 //		//{
@@ -1426,7 +1428,7 @@ void Population::switch_species(Organism *org, Species *orig_species, Species *n
 //	if (org_to_kill) {
 //		//Remove the organism from its species and the population
 //		orgs_species->remove_org(org_to_kill);  //Remove from species
-//		delete org_to_kill;  //Delete the organism itself 
+//		delete org_to_kill;  //Delete the organism itself
 //		organisms.erase(deadorg); //Remove from population list
 //
 //		//Did the species become empty?
@@ -1442,10 +1444,10 @@ void Population::switch_species(Organism *org, Species *orig_species, Species *n
 //	}
 //
 //	return org_to_kill;
-//} 
+//}
 
 
-////Print Population to a file specified by a string   
+////Print Population to a file specified by a string
 //bool Population::print_to_file(char *filename){
 //std::vector<Organism*>::iterator curorg;
 //
